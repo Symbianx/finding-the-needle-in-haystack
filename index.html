@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	<style>
+		.lifecycle-step-left {
+			min-height: 7em;
+		}
+
+		.lifecycle-step-right {
+			margin-left: auto;
+			margin-right: auto
+		}
+
+		/* img.lifecycle-step-left {
+			max-width: 80vh;
+		} */
+		.column-container {
+			display: flex;
+			align-items: center;
+			flex-grow: 1;
+
+			img {
+				margin: 20px;
+			}
+		}
+
+		ul.pros-cons-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+
+			li {
+				padding-left: 1rem;
+				text-indent: -0.7rem;
+			}
+
+			li::before {
+				margin-right: 0.7rem;
+			}
+
+			li.pro::before {
+				content: "✅ ";
+			}
+
+
+			li.con::before {
+				content: "⚠️ ";
+			}
+		}
+
+		.inline {
+			display: inline;
+		}
+
+		.solution-logo {
+			max-width: 20vw;
+			max-height: 15vw;
+			padding-left: 5vw;
+			padding-right: 5vw;
+
+			img {
+				width: 100%;
+				object-fit: contain;
+				vertical-align: middle;
+			}
+		}
+
+	</style>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<img src="./static/logos/tempo.png">
+				<h2>Finding the Needle in the Haystack</h2>
+				<p>How we implemented Tempo to improve Bynder's system observability</p>
+			</section>
+			<section>
+				<div style="display: flex; align-items: center; justify-content: center;">
+					<img src="./static/me.jpg" style="border-radius: 50%; height: 50vh; max-height: 500px;">
+					<div style="padding-left: 10vh; text-align: left;">
+						<h2>Miguel Alexandre</h2>
+						<p>Staff DevOps Engineer</p>
+						<p>Developer Experience @ Bynder</p>
+						<span>
+							<a href="https://github.com/symbianx" style="display: flex; align-items: center;"><img
+									style="margin: 0; margin-right: 10px; max-height: 40px;"
+									src="./static/logos/github.svg">Symbianx</a>
+						</span>
+					</div>
+				</div>
+			</section>
+			<section>
+				<section>
+					<h2>Before we get into the cool stuff</h2>
+					<h2 class="fragment" data-fragment-index="0">Let's quickly talk about</h2>
+					<h1 class="fragment" data-fragment-index="0">Bynder</h1>
+				</section>
+				<section data-auto-animate data-transition="none">
+					<h1>Bynder</h1>
+					<img src="./static/bynder-demo/asset-bank.png"></img>
+				</section>
+				<section data-transition="none">
+					<h1>Bynder</h1>
+					<img src="./static/bynder-demo/asset-bank-upload-media-click.png"></img>
+				</section>
+				<section data-transition="none">
+					<h1>Bynder</h1>
+					<img src="./static/bynder-demo/asset-bank-select-file.png"></img>
+				</section>
+				<section data-transition="none">
+					<h1>Bynder</h1>
+					<img src="./static/bynder-demo/asset-bank-after-upload.png"></img>
+				</section>
+				<section data-auto-animate>
+					<h3>Easy, right?</h3>
+					<p class="fragment">Not quite.</p>
+				</section>
+				<section data-auto-animate>
+					<h3>Behind the beautiful UI</h3>
+					<img class="lifecycle-step-left" src="./static/haystack-2.jpeg" alt="" style="max-height: 20em;">
+				</section>
+				<section data-auto-animate>
+					<h3>Behind the beautiful UI</h3>
+					<div class="column-container">
+						<img class="lifecycle-step-left" src="./static/haystack-2.jpeg" alt=""
+							style="max-height: 20em;">
+						<div style="margin-left: auto; margin-right: auto; margin-right: 2em; margin-left: 2em">
+							<p>When you upload a digital asset:</p>
+							<ul>
+								<li>Most of the critical path is asynchronous</li>
+								<li>Lots of background processes get started</li>
+								<li>A 200 OK is not always a show of success</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate data-auto-animate-restart>
+					<div>
+						<h2>So, how do we find the needle in the haystack?</h2>
+						<p class="fragment">We can use a metal detector</p>
+					</div>
+					<h3 class="fragment">Luckily, we had one</h3>
+				</section>
+				<section data-auto-animate>
+					<h3>Luckily, we had one</h3>
+					<div class="column-container">
+						<img src="./static/metal-detector-2.jpeg">
+						<div style="margin-left: auto; margin-right: auto; margin-right: 2em; margin-left: 2em">
+							<ul class="pros-cons-list">
+								<li class="pro">Super High Tech Relic</li>
+								<li class="pro">Full of features</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h3>Luckily, we had one</h3>
+					<div class="column-container">
+						<img src="./static/metal-detector-2.jpeg">
+						<div style="margin-left: auto; margin-right: auto; margin-right: 2em; margin-left: 2em">
+							<ul class="pros-cons-list">
+								<li class="pro">Super High Tech Relic</li>
+								<li class="pro">Full of features</li>
+								<li class="con" data-fragment-index="0">Engineers were not using it</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate data-auto-animate-restart>
+					<h3>Our very expensive APM solution was not being used</h3>
+					<h4 class="fragment">we were not very happy with that</h4>
+				</section>
+				<section data-auto-animate>
+					<h3>So we set out to change it</h3>
+				</section>
+				<section>
+					<h2>We asked ourselves a few questions...</h2>
+				</section>
+				<section data-auto-animate data-auto-animate-restart>
+					<h2>#1 What do Engineers think about the APM tool?</h2>
+				</section>
+				<section data-auto-animate>
+					<h2>#1 What do Engineers think about the APM tool?</h2>
+					<ul class="pros-cons-list">
+						<li class="pro">Easy to set-up, install the lib and it's good to go</li>
+						<li class="con fragment" data-fragment-index="0">Metrics and logging data is not there</li>
+						<li class="con fragment" data-fragment-index="0">The library was not installed in all services
+						</li>
+						<li class="con fragment" data-fragment-index="0">It's not user-friendly (too cluttered)</li>
+						<li class="con fragment" data-fragment-index="0">Too expensive</li>
+					</ul>
+				</section>
+				<section>
+					<h2>#2 Can we write an APM tool in-house?</h2>
+					<p class="fragment">Maybe.</p>
+					<p class="fragment">But should we?</p>
+					<p class="fragment">No.</p>
+				</section>
+				<section>
+					<h2>#3 Ok, so what can we do?</h2>
+					<ul class="pros-cons-list">
+						<li class="pro fragment">Metrics and Dashboards</li>
+						<li class="pro fragment">Centralized Logging</li>
+						<li class="pro fragment">Error Tracking</li>
+						<li class="con fragment">Distributed Tracing</li>
+					</ul>
+					<br />
+					<br />
+				</section>
+				<section>
+					<h2>#4 Can we deploy a Distributed Tracing platform?</h2>
+					<p class="fragment">Yes!</p>
+				</section>
+			</section>
+			<section>
+				<section data-auto-animate>
+					<h2>Our Distributed Tracing Goals</h2>
+					<br />
+					<h4 class="fragment">Provide a step by step overview of a request as it flows through our
+						systems</h4>
+				</section>
+				<section data-auto-animate>
+					<h4>Provide a step by step overview of a request as it flows through our
+						systems</h4>
+					<img data-fragment-index="0" style="max-height: 20em; max-width: 20em;"
+						src="./static/haystack-2.jpeg">
+				</section>
+				<section data-auto-animate>
+					<h4>Provide a step by step overview of a request as it flows through our
+						systems</h4>
+					<img data-fragment-index="0" style="max-height: 20em; max-width: 10em; opacity: 50%;"
+						src="./static/haystack-2.jpeg">
+					<img src="./static/white-arrow.png"></img>
+					<img data-fragment-index="0" style="max-height: 20em; max-width: 20em;"
+						src="./static/haystack-clear-3.jpeg">
+				</section>
+				<section data-auto-animate-restart="" data-auto-animate="">
+					<h3>Ok, we know what we want. How do we do it?</h3>
+				</section>
+				<section data-auto-animate="">
+					<h3>Ok, we know what we want. How do we do it?</h3>
+					<img src="./static/google-how-to-tracing-results.png">
+				</section>
+				<section data-auto-animate="">
+					<h3>Ok, we know what we want. How do we do it?</h3>
+					<img class="lifecycle-step-left" src="static/architecture1.drawio.png">
+				</section>
+				<section data-auto-animate="">
+					<h3>Ok, we know what we want. How do we do it?</h3>
+					<div class="column-container">
+						<img class="lifecycle-step-left" src="static/architecture1.drawio.png">
+						<div class="lifecycle-step-right">
+							<ul class="pros-cons-list">
+								<li class="pro">Very easy to maintain</li>
+								<li class="pro">Open Source</li>
+								<li class="con fragment" data-fragment-index="0">Very expensive</li>
+								<li class="con fragment" data-fragment-index="1">At some point it would require <span
+										class="fragment highlight-red">sampling</span></li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<img class="lifecycle-step-left" src="static/logos/tempo-with-text.png">
+				</section>
+				<section data-auto-animate>
+					<div class="column-container">
+						<img class="lifecycle-step-left" src="static/logos/tempo-with-text.png">
+						<div class="lifecycle-step-right">
+							<p>Tempo is a distributed tracing backend:</p>
+							<ul class="pros-cons-list">
+								<li class="pro">Open Source</li>
+								<li class="pro">Object storage based</li>
+								<li class="pro">Built to sample 100% of requests</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<code>$ helm install tempo</code>
+					<p>Project Complete.</p>
+					<p class="fragment">Just Kidding</p>
+				</section>
+				<section data-auto-animate>
+					<h3>Our Tempo approach?</h3>
+					<div class="fragment">
+						<ul>
+							<li>Sample 100% of requests</li>
+							<li>Single tenant configuration</li>
+							<li>Deployed in Microservices Mode</li>
+							<li>Using AWS Lambda for searching</li>
+							<li>Managed with Terraform</li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<h3>How do we use Tempo?</h3>
+					<ol>
+						<li class="fragment">Ingesting the data</li>
+						<li class="fragment">Generating useful metrics</li>
+						<li class="fragment">Reading the data</li>
+					</ol>
+				</section>
+				<section data-auto-animate="" data-auto-animate-restart="">
+					<h3>Ingesting the data</h3>
+					<img class="lifecycle-step-left" style="background-color: white; padding: 1%; min-width: 55vw;"
+						src="./static/tempo-write-path.drawio.svg">
+				</section>
+				<section data-auto-animate="">
+					<h3>Ingesting the data</h3>
+					<div class="column-container">
+						<img class="lifecycle-step-left" style="background-color: white; padding: 1%; min-width: 55vw;"
+							src="./static/tempo-write-path.drawio.svg">
+						<div class="lifecycle-step-right">
+							<ul>
+								<li>Tempo distributor picks up trace data from kafka</li>
+								<li>The distributor spreads the data between the ingesters</li>
+								<li>Ingesters keep hot data in disk and write cold data to the bucket</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate="" data-auto-animate-restart="">
+					<h3>Generating useful metrics</h3>
+					<img class="lifecycle-step-left" style="background-color: white; padding: 1%;min-width: 55vw;"
+						src="./static/tempo-metrics-path.drawio.svg">
+				</section>
+				<section data-auto-animate="">
+					<h3>Generating useful metrics</h3>
+					<!-- <p>That's where Tempo Metrics Generator comes in</p> -->
+					<div class="column-container">
+						<img class="lifecycle-step-left" style="background-color: white; padding: 1%;min-width: 55vw;"
+							src="./static/tempo-metrics-path.drawio.svg">
+						<div class="lifecycle-step-right">
+							<ul>
+								<li>Tempo distributor picks up trace data from kafka</li>
+								<br />
+								<li>Metrics Generator computes metrics from the traces
+									<ul>
+										<li>Span Metrics (RED Metrics)</li>
+										<li>Service Graph (Service Relationship metrics)</li>
+									</ul>
+								</li>
+								<br />
+								<li>Ships metrics to our Thanos metrics system</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate="" data-auto-animate-restart="">
+					<h3>Accessing the data</h3>
+					<img class="lifecycle-step-left" style="background-color: white; padding: 1%;min-width: 55vw;"
+						src="./static/tempo-read-path.drawio.svg">
+				</section>
+				<section data-auto-animate="">
+					<h3>Accessing the data</h3>
+					<div class="column-container">
+						<img class="lifecycle-step-left" style="background-color: white; padding: 1%;min-width: 55vw;"
+							src="./static/tempo-read-path.drawio.svg">
+						<div class="lifecycle-step-right">
+							<ul>
+								<li>Grafana Queries the Tempo Query Frontend for a trace</li>
+								<li>Query Frontend shards the queries between the Queriers</li>
+								<li>Querier performs one of:
+									<ul>
+										<li>Lookup trace by ID in the bucket</li>
+										<li>Delegate search to Lambda</li>
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h3>Ok, we have the platform, what's the magic sauce for data?</h3>
+				</section>
+				<section data-auto-animate>
+					<img style="max-width: 55vw;" src="./static/logos/opentelemetry.png">
+				</section>
+				<section data-auto-animate>
+					<div class="column-container">
+						<img class="lifecycle-step-left" style="min-height: 100px; max-width: 40vw;"
+							src="./static/logos/opentelemetry.png">
+						<div class="lifecycle-step-right">
+							<p>Open-Source framework for collecting telemetry data:</p>
+							<ul>
+								<li style="font-weight: 800;">Vendor agnostic</li>
+								<li>Fully open source.</li>
+								<li>Exports logging, tracing and metrics signals.</li>
+								<li>Supports most backends, like prometheus and tempo.</li>
+								<li>Automatic instrumentation for most popular frameworks</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h2>Automatic Instrumentation?</h2>
+					<p class="fragment">The process of automatically injecting code to the application to track what
+						calls are being made.</p>
+				</section>
+				<section>
+					<h3>Really cool but we still need to install the SDK in 200+ services</h3>
+				</section>
+				<section data-auto-animate="">
+					<h3>How we simplified the adoption of OpenTelemetry</h3>
+					<p class="fragment">Focus on reducing development time spent on this</p>
+				</section>
+				<section data-auto-animate="">
+					<h3>How we simplified the adoption of OpenTelemetry</h3>
+					<p>Focus on reducing development time spent on this</p>
+					<div class="column-container">
+						<!-- <img class="lifecycle-step-left" style="max-width: 70vw;" src="./static/tech-insights.png"> -->
+						<pre class="lifecycle-step-left" style="max-width: 75vw;">
+						<code data-trim data-line-numbers="9-25" class="language-yaml">
+							apiVersion: v1
+							kind: Pod
+							metadata:
+								name: amazing-svc-7ccdd867db-cwsxt
+								namespace: amazing
+							spec:
+							containers:
+								- env:
+									- name: OTEL_TRACES_EXPORTER
+										value: otlp
+									- name: OTEL_SERVICE_NAME
+										value: amazing-svc
+									- name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+										value: http://otel-collector.distributed-tracing-shipping:4317
+						</code>
+						</pre>
+						<div class="lifecycle-step-right" style="padding-left: 10px;">
+							<ul>
+								<li>We inject env variables to configure OpenTelemetry</li>
+								<li>Wrote "2 step documentation" for all languages</li>
+								<li>Setup Backstage to track adoption of the SDK</li>
+							</ul>
+						</div>
+					</div>
+					<ul>
+					</ul>
+				</section>
+				<section>
+					<h3>In the end, all a developer has to do is...</h3>
+					<pre><code data-trim data-line-numbers="1-2|3-4|6-7" class="language-bash">
+						# Install dependencies
+						pipenv install "opentelemetry-distro[otlp]"
+						# Auto detect and install instrumentation
+						pipenv run opentelemetry-bootstrap | xargs pipenv install
+
+						# Run application
+						opentelemetry-instrument pipenv run python app.py
+					</code></pre>
+					<h4 class="fragment">... and magically spans will be pushed to the Opentelemetry collector</h4>
+				</section>
+				<section data-auto-animate-restart="" data-auto-animate="">
+					<h3>Opentelemetry Collector?</h3>
+					<p class="fragment">A highly extensible vendor agnostic gateway between your applications and
+						observability backends.</p>
+				</section>
+				<section data-auto-animate="">
+					<h3>Opentelemetry Collector?</h3>
+					<p>A highly extensible vendor agnostic gateway between your applications and observability backends.
+					</p>
+					<div class="column-container">
+						<img class="lifecycle-step-left" src="./static/otel-collector.png">
+						<div class="lifecycle-step-right" style="padding-left: 10px;">
+							<ul>
+								<li>Receives all observability signals</li>
+								<li>Processes the signals in a unified manner. e.g.:
+									<ul>
+										<li>Adding attributes</li>
+										<li>Redacting attributes</li>
+									</ul>
+								</li>
+								<li>Exports the signals to the backends</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section>
+				<section>
+					<h2>Now that we have the data, how do we use it?</h2>
+				</section>
+				<section>
+					<h4>#1 Debugging requests with Correlation IDs</h4>
+					<div class=" column-container">
+						<img class="lifecycle-step-left" src="./static/logs-finder.png">
+						<div class="lifecycle-step-right" style="padding-left: 10px;">
+							<ul>
+								<li>Every request is assigned a unique correlation id</li>
+								<li>Traces/Logs/Errors contain the correlation id</li>
+								<li>We have "Logs Finder" that finds the IDs in Tempo</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h4>#2 Standard APM Dashboards</h4>
+					<div class=" column-container">
+						<img class="lifecycle-step-left" style="max-width: 70vw;" src="./static/apm-dashboard.png">
+						<div class="lifecycle-step-right" style="padding-left: 10px;">
+							<ul>
+								<li>Combining trace metrics + infra metrics</li>
+								<li>Language agnostic</li>
+								<li>Including Service to service/database metrics</li>
+								<li>Exemplars allow us to jump from dashboards to traces</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section>
+				<section data-auto-animate-restart="" data-auto-animate="">
+					<h2>Ok, I've been talking for too long</h2>
+					<p>Let's see how it all ties in together</p>
+				</section>
+				<section data-auto-animate="">
+					<p>Let's see how it all ties in together</p>
+					<img style="width: 130vw; background-color: white; padding: 1%;"
+						src="static/full-architecture-tracing.drawio.svg">
+				</section>
+				<section data-auto-animate="">
+					<p>Let's see how it all ties in together</p>
+					<div class="column-container">
+						<img style="max-width: 70vw; background-color: white; padding: 1%;"
+							src="static/full-architecture-tracing.drawio.svg">
+						<div class="lifecycle-step-right" style="padding-left: 10px;">
+							<ul>
+								<li>Ingesting 6TB of raw data per day:
+									<ul>
+										<li>7.000+ traces p/ second</li>
+										<li>50.000+ spans p/ second</li>
+									</ul>
+								</li>
+								<br />
+								<li>Coming from:
+									<ul>
+										<li>14 clusters</li>
+										<li>400+ nodes</li>
+									</ul>
+								</li>
+								<br />
+								<li>At 1/5 of the cost of our previous provider</li>
+							</ul>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section data-auto-animate-restart="" data-auto-animate="">
+				<h2>What did we learn from this?</h2>
+			</section>
+			<section data-auto-animate="">
+				<h2>What did we learn from this?</h2>
+				<div class=" column-container">
+					<img class="lifecycle-step-left" style="max-width: 60vw;" src="./static/metal-detector-simple.jpeg">
+					<div class="lifecycle-step-right" style="padding-left: 10px;">
+						<ul>
+							<li>Sometimes all you need is a simple metal detector</li>
+							<br />
+							<li>Start small, work your way up</li>
+							<br />
+							<li>Tempo scales really well, but:
+								<ul>
+									<li>It does add some operational burden</li>
+									<li>Takes a bit to learn all the little settings</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</section>
+			<section>
+				<h1>Thank you!</h1>
+				<h4>Questions?</h4>
+			</section>
+		</div>
+	</div>
+
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+
+
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			width: 1920,
+			height: 1080,
+			hash: true,
+			// navigationMode: 'linear',
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+		});
+	</script>
+</body>
+
+</html>
