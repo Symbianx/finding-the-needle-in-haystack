@@ -266,7 +266,7 @@ gulp.task('default', gulp.series(gulp.parallel('js', 'css', 'plugins'), 'test'))
 
 gulp.task('build', gulp.parallel('js', 'css', 'plugins'))
 
-gulp.task('package', gulp.series(() =>
+gulp.task('package', gulp.series("build", () =>
 
     gulp.src(
         [
@@ -275,7 +275,7 @@ gulp.task('package', gulp.series(() =>
             './lib/**',
             './images/**',
             './plugin/**',
-            './**/*.md'
+            './static/**'
         ],
         { base: './' }
     )
